@@ -9,10 +9,19 @@ filename = "serve/kyrgios_1.mp4"
 intervalo_baixo = np.array([30,50,166])
 intervalo_alto = np.array([40,200,255])
 
+
+
 if not os.path.exists(filename):
     print(f"Erro: Arquivo '{filename}' não encontrado|")
 else:
     cap = cv2.VideoCapture(filename)
+    #pega o FPS do vídeo original
+    fps = cap.get(cv2.CAP_PROP_FPS)
+
+    #CALCULA O ATRASO EM MILISEGUDOS (1000MS/FPS)
+    #SE O FPS FOR 30, O DELAY SERÁ ~33MS
+    delay = int(1000/fps) if fps > 0 else 30
+    print(delay)
     
     if not cap.isOpened():
         print("Erro ao abrir o arquivo de video.")
@@ -34,14 +43,14 @@ else:
                 centro = (int(x),int(y))
                 raio = int(raio)
 
-                if raio > 5:
+                if raio > 5 and y < 0.5 * frame.shape[0]:
                     cv2.circle(frame,centro, raio,(0,255,0),2)
 
         
 
             cv2.imshow('Deteccao da Bolinha de Tenis',frame)  
            # cv2.imshow('Deteccoo da Bolinha de Tenis',frame)
-            if cv2.waitKey(1) & 0xFF == ord('q'):
+            if cv2.waitKey(delay) & 0xFF == ord('q'):
                 break
 
         cap.release()
