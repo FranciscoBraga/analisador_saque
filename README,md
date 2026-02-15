@@ -1,0 +1,41 @@
+# 🎾 Analisador de Saque de Tênis
+
+Este projeto utiliza **Visão Computacional** para analisar movimentos de saque de tênis através de vídeos. O sistema combina estimativa de pose humana e rastreamento de objetos.
+
+## 🚀 Funcionalidades
+
+* **Rastreamento de Pose:** Identifica os pontos articulares do corpo do jogador usando **MediaPipe**.
+* **Detecção da Bolinha:** Segmentação da bolinha de tênis através de conversão para o espaço de cor **HSV**.
+* **Filtragem de Contornos:** Desenho de círculos de rastreio em tempo real.
+
+
+## 📂 Estrutura do Repositório
+
+* `ball.py`: Script para detecção e rastreamento da bolinha.
+* `serve_cut.py`: Script para análise de biomecânica com MediaPipe.
+* `serve/`: Pasta com os vídeos de entrada (.mp4).
+
+## 🛠️ Tecnologias Utilizadas
+
+* **Python 3.10**
+* **OpenCV:** Processamento de imagem.
+* **MediaPipe:** Extração de marcos corporais (Landmarks).
+* **NumPy:** Manipulação de matrizes.
+
+## 🔧 Como Executar
+
+1.  Instale as dependências:
+    ```bash
+    pip install -r requirements.txt
+    ```
+2.  Execute o rastreador de bolinha:
+    ```bash
+    python ball.py
+    ```
+3.  Execute a análise de pose:
+    ```bash
+    python serve_cut.py
+    ```
+
+---
+**Dica:** Pressione a tecla **'q'** para encerrar a visualização dos vídeos.
