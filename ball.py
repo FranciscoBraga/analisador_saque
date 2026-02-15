@@ -4,17 +4,17 @@ import pickle
 import os
 
 
-filename = "serve/kyrgios_1.mp4"
+filename = "kyrgios_1"
 
 intervalo_baixo = np.array([30,50,166])
 intervalo_alto = np.array([40,200,255])
 
 list_balls = []
 
-if not os.path.exists(filename):
+if not os.path.exists(f'serve/{filename}.mp4'):
     print(f"Erro: Arquivo '{filename}' não encontrado|")
 else:
-    cap = cv2.VideoCapture(filename)
+    cap = cv2.VideoCapture(f'serve/{filename}.mp4')
     #pega o FPS do vídeo original
     fps = cap.get(cv2.CAP_PROP_FPS)
 
@@ -56,6 +56,9 @@ else:
            # cv2.imshow('Deteccoo da Bolinha de Tenis',frame)
             if cv2.waitKey(delay) & 0xFF == ord('q'):
                 break
+        
+        with open(f'landmarks/ball_{filename}.pickle','wb') as f:
+            pickle.dump(list(list_balls),f)
 
         cap.release()
         cv2.destroyAllWindows()
