@@ -9,7 +9,7 @@ filename = "serve/kyrgios_1.mp4"
 intervalo_baixo = np.array([30,50,166])
 intervalo_alto = np.array([40,200,255])
 
-
+list_balls = []
 
 if not os.path.exists(filename):
     print(f"Erro: Arquivo '{filename}' não encontrado|")
@@ -21,7 +21,7 @@ else:
     #CALCULA O ATRASO EM MILISEGUDOS (1000MS/FPS)
     #SE O FPS FOR 30, O DELAY SERÁ ~33MS
     delay = int(1000/fps) if fps > 0 else 30
-    print(delay)
+
     
     if not cap.isOpened():
         print("Erro ao abrir o arquivo de video.")
@@ -38,6 +38,8 @@ else:
             mascara = cv2.inRange(hsv,intervalo_baixo, intervalo_alto)
             contornos, _ = cv2.findContours(mascara,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
 
+            conts = []
+
             for contorno in contornos:
                 (x,y), raio = cv2.minEnclosingCircle(contorno)
                 centro = (int(x),int(y))
@@ -45,8 +47,10 @@ else:
 
                 if raio > 5 and y < 0.5 * frame.shape[0]:
                     cv2.circle(frame,centro, raio,(0,255,0),2)
+                    conts += [centro]
 
-        
+            list_balls += [conts]
+
 
             cv2.imshow('Deteccao da Bolinha de Tenis',frame)  
            # cv2.imshow('Deteccoo da Bolinha de Tenis',frame)
