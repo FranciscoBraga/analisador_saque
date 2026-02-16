@@ -5,7 +5,6 @@ import pickle
 import mediapipe as mp
 import numpy as np
 
-
 st.set_page_config(layout="wide")
 
 if "idx" in st.session_state:
@@ -15,7 +14,6 @@ if "idx2" in st.session_state:
 if "is_playing" in st.session_state: 
     st.session_state.is_playing= False
  
-
 def draw_sidebar(landmarks, landmarks2):
     expander_frame = st.sidebar.expander("🎛️ Frame Controller", True)
     slider_play =  expander_frame.empty()
@@ -51,7 +49,6 @@ def draw_sidebar(landmarks, landmarks2):
     st.session_state.idx =  slider_play.slider("Video 1",0,len(landmarks)-1,st.session_state.idx)
     st.session_state.idx2 =  slider_play2.slider("Video 2",0,len(landmarks2)-1,st.session_state.idx2)
 
-
 @st.cache_data()
 def load_data(video1,video2):
     land_file = f"landmarks/landmarks_{video1.split('.')[0]}.pickle"
@@ -79,3 +76,24 @@ def load_video(video, video2):
        2:cv2.VideoCapture(f"serve/{video2}")
     }
     return cap
+
+video_files = [i.split(".")[0].replace("ball_","") for i in os.listdir("landmarks") if "ball" in i]
+video_files.sort()
+
+video = st.sidebar.selectbox("Selecione o vídeo 1:", video_files)
+video2 = st.sidebar.selectbox("Selecione o vídeo2:",video_files, index=len(video_files)-1)
+
+render_ball = st.checkbox("Render Ball")
+
+body_parts = {
+    "right upper":16,
+    "left upper":15,
+    "right lower":28,
+    "left lower":27
+}
+
+bp = st.multiselect("Shadow on", body_parts.keys(),["right upper"])
+cap = load_video(video, video2)
+lands_data , lands_data2, ball, ball2 = load_data(video, video2)
+
+draw_sidebar(lands_data,lands_data2)
