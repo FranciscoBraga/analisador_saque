@@ -52,3 +52,30 @@ def draw_sidebar(landmarks, landmarks2):
     st.session_state.idx2 =  slider_play2.slider("Video 2",0,len(landmarks2)-1,st.session_state.idx2)
 
 
+@st.cache_data()
+def load_data(video1,video2):
+    land_file = f"landmarks/landmarks_{video1.split('.')[0]}.pickle"
+    with open(land_file, 'rb') as f:
+        land_data = pickle.load(f)
+
+    land_file2 = f"landmarks/landmarks_{video2.split('.')[0]}.pickle"
+    with open(land_file2, 'rb') as f:
+        land_data2 = pickle.load(f)
+
+    land_file = f"landmarks/ball_{video1.split('.')[0]}.pickle"
+    with open(land_file, 'rb') as f:
+        ball = pickle.load(f)
+
+    land_file = f"landmarks/ball_{video1.split('.')[0]}.pickle"
+    with open(land_file, 'rb') as f:
+        ball2 = pickle.load(f)
+    
+    return  land_data,land_data2, ball, ball2
+
+@st.cache_resource
+def load_video(video, video2):
+    cap ={
+       1:cv2.VideoCapture(f"serve/{video}"),
+       2:cv2.VideoCapture(f"serve/{video2}")
+    }
+    return cap
