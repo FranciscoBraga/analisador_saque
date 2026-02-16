@@ -10,12 +10,12 @@ mp_drawing = mp.solutions.drawing_utils
 mp_pose = mp.solutions.pose
 test_hands = mp.solutions.hands
 
-file_name = "serve/01-24_1_1.mp4"
+file_name = "serve/kyrgios.mp4"
 cap = cv2.VideoCapture(file_name)
 fps = int(cap.get(cv2.CAP_PROP_FPS))
 seconds = 4
 
-frames = deque(maxlen=fps*4)
+frames = deque(maxlen=fps*seconds)
 landmarks_frames = deque(maxlen=fps*seconds)
 min_visibility = 0.9
 
@@ -51,10 +51,17 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 mp_pose.POSE_CONNECTIONS
             )
 
+            #liSTAS DE PONTOS
             landmarks = results.pose_landmarks.landmark
            # wrist_visible = pose[mp_pose.PoseLandmark.LEFT_WRIST] > min_visibility
-            
-           
+            landmarks_frames.append(results.pose_landmarks)
+            frames.append(frame)
+
+            wrist_visible = landmarks[mp_pose.PoseLandmark.LEFT_WRIST].visibility > min_visibility
+            elbow_visible = landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW].visibility > min_visibility
+            shoulder_visible = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER].visibility > min_visibility
+
+            #print(f"Pulso: {wrist_visible}, Cotovelo: {elbow_visible}, Ombro: {shoulder_visible}")
 
         cv2.imshow("tela", image)
         
