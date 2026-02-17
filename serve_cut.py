@@ -11,8 +11,8 @@ mp_pose = mp.solutions.pose
 test_hands = mp.solutions.hands
 out = None
 
-file_name = "serve/kyrgios.mp4"
-cap = cv2.VideoCapture(file_name)
+file_name = "kyrgios.mp4"
+cap = cv2.VideoCapture(f'serve/{file_name}')
 fps = int(cap.get(cv2.CAP_PROP_FPS))
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')
 seconds = 4
@@ -78,13 +78,14 @@ with mp_pose.Pose(min_detection_confidence=0.5, min_tracking_confidence=0.5) as 
                 post_condition3_frames +=1
 
             if condition1_meet and condition2_meet and condition3_meet and out is None:
-                print("estou aqui")
                 h, w, _ = image.shape
                 saque_count += 1
-                out = cv2.VideoWriter(f'{file_name.split(".")[0]}_{saque_count}.mp4',fourcc,fps,(w,h))
+                out = cv2.VideoWriter(f'serve/{file_name.split(".")[0]}_{saque_count}.mp4',fourcc,fps,(w,h))
 
             if out is not None:
-                if post_condition3_frames >=fps *2:
+                if post_condition3_frames >=fps*2:
+                    with open(f'landmarks/landmarks_{file_name.split(".")[0]}_{saque_count}.pickle','wb') as f:
+                        pickle.dump(list(landmarks_frames),f)
 
                     while not len(frames)==0:
                         out.write(frames.popleft())
