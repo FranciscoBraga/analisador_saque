@@ -13,6 +13,8 @@ if "idx2" not in st.session_state:
     st.session_state.idx2 = 0
 if "is_playing" not  in st.session_state: 
     st.session_state.is_playing= False
+
+
  
 def draw_sidebar(landmarks, landmarks2):
     expander_frame = st.sidebar.expander("🎛️ Frame Controller", True)
@@ -121,3 +123,19 @@ if not st.session_state["is_playing"]:
 
 
 
+while st.session_state["is_playing"]:
+    st.session_state.idx += 1  if st.session_state['idx'] < len(lands_data) -1 else 0
+    st.session_state.idx2 += 1  if st.session_state['idx2'] < len(lands_data2) -1 else 0
+    cap[1].set(cv2.CAP_PROP_POS_FRAMES,st.session_state['idx'])
+    cap[2].set(cv2.CAP_PROP_POS_FRAMES,st.session_state["idx2"])
+    ret, frame = cap[1].read()
+    ret2, frame2 = cap[2].read()
+    h, w, _ = frame.shape
+    h2, w2, _ =frame2.shape
+    frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+    frame2 = cv2.cvtColor(frame2,cv2.COLOR_BGR2RGB)
+
+    with ph.container() as p:
+        st.image(frame)
+    with ph2.container() as  p:
+        st.image(frame2)
