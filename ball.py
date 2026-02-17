@@ -4,10 +4,13 @@ import pickle
 import os
 
 
-filename = "kyrgios_1"
+filename = "antes_1"
 
-intervalo_baixo = np.array([30,50,166])
-intervalo_alto = np.array([40,200,255])
+# intervalo_baixo = np.array([30,50,166])
+# intervalo_alto = np.array([40,200,255])
+
+intervalo_baixo = np.array([37,100,240])
+intervalo_alto = np.array([42,200,255])
 
 list_balls = []
 
@@ -45,7 +48,8 @@ else:
                 centro = (int(x),int(y))
                 raio = int(raio)
 
-                if raio > 5 and y < 0.5 * frame.shape[0]:
+                #mudei o raio também
+                if raio > 1 and y < 0.5 * frame.shape[0]:
                     cv2.circle(frame,centro, raio,(0,255,0),2)
                     conts += [centro]
 
