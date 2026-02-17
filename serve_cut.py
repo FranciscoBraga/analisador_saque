@@ -11,7 +11,7 @@ mp_pose = mp.solutions.pose
 test_hands = mp.solutions.hands
 out = None
 
-file_name = "kyrgios.mp4"
+file_name = "antes_12.mp4"
 cap = cv2.VideoCapture(f'serve/{file_name}')
 fps = int(cap.get(cv2.CAP_PROP_FPS))
 fourcc = cv2.VideoWriter_fourcc(*'mp4v')

@@ -7,11 +7,11 @@ import numpy as np
 
 st.set_page_config(layout="wide")
 
-if "idx" in st.session_state:
+if "idx" not in st.session_state:
     st.session_state.idx = 0
-if "idx2" in st.session_state:
+if "idx2" not in st.session_state:
     st.session_state.idx2 = 0
-if "is_playing" in st.session_state: 
+if "is_playing" not  in st.session_state: 
     st.session_state.is_playing= False
  
 def draw_sidebar(landmarks, landmarks2):
@@ -34,7 +34,7 @@ def draw_sidebar(landmarks, landmarks2):
     if col1.button("⏪ Voltar"):
         st.session_state.is_playing = False
         st.session_state.idx = st.session_state.idx - 1 if st.session_state.idx > 0 else 0
-        st.session_state,idx2 = st.session_state,idx2 -1 if st.session_state.idx2 > 0 else 0
+        st.session_state.idx2 = st.session_state.idx2 -1 if st.session_state.idx2 > 0 else 0
 
     if col1.button("⏩ Avançar"):
         st.session_state.is_playing = False
@@ -72,8 +72,8 @@ def load_data(video1,video2):
 @st.cache_resource
 def load_video(video, video2):
     cap ={
-       1:cv2.VideoCapture(f"serve/{video}"),
-       2:cv2.VideoCapture(f"serve/{video2}")
+       1:cv2.VideoCapture(f"serve/{video}.mp4"),
+       2:cv2.VideoCapture(f"serve/{video2}.mp4")
     }
     return cap
 
@@ -97,3 +97,27 @@ cap = load_video(video, video2)
 lands_data , lands_data2, ball, ball2 = load_data(video, video2)
 
 draw_sidebar(lands_data,lands_data2)
+
+col1,col2,col3 = st.columns(3)
+ph=col1.empty()
+cont = ph.container()
+ph2 = col2.empty()
+cont2 = ph2.container()
+ph3 = col3.empty()
+cont3 = ph3.container()
+
+if not st.session_state["is_playing"]:
+    cap[1].set(cv2.CAP_PROP_POS_FRAMES,st.session_state['idx'])
+    cap[2].set(cv2.CAP_PROP_POS_FRAMES,st.session_state["idx2"])
+    ret, frame = cap[1].read()
+    ret2, frame2 = cap[2].read()
+    h, w, _ = frame.shape
+    h2, w2, _ =frame2.shape
+    frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
+    frame2 = cv2.cvtColor(frame2,cv2.COLOR_BGR2RGB)
+
+    cont.image(frame)
+    cont2.image(frame2)
+
+
+
