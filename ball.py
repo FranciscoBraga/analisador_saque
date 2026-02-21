@@ -4,13 +4,13 @@ import pickle
 import os
 
 
-filename = "antes_1"
+filename = "kyrgios_1"
+intervalo_baixo = np.array([35,50,166])
+intervalo_alto = np.array([40,100,255])
 
-# intervalo_baixo = np.array([30,50,166])
-# intervalo_alto = np.array([40,200,255])
-
-intervalo_baixo = np.array([37,100,240])
-intervalo_alto = np.array([42,200,255])
+#filename = "antes_1"
+#intervalo_baixo = np.array([37,150,220])
+#intervalo_alto = np.array([42,200,255])
 
 list_balls = []
 
@@ -55,9 +55,8 @@ else:
 
             list_balls += [conts]
 
-
-            cv2.imshow('Deteccao da Bolinha de Tenis',frame)  
-           # cv2.imshow('Deteccoo da Bolinha de Tenis',frame)
+            #cv2.imshow('Deteccao da Bolinha de Tenis',mascara)  
+            cv2.imshow('Deteccao da Bolinha de Tenis',frame)
             if cv2.waitKey(delay) & 0xFF == ord('q'):
                 break
         

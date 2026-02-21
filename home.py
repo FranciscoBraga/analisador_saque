@@ -4,6 +4,8 @@ import cv2
 import pickle
 import mediapipe as mp
 import numpy as np
+import pdb
+from scipy.spatial import distance
 
 st.set_page_config(layout="wide")
 
@@ -15,7 +17,6 @@ if "is_playing" not  in st.session_state:
     st.session_state.is_playing= False
 
 
- 
 def draw_sidebar(landmarks, landmarks2):
     expander_frame = st.sidebar.expander("🎛️ Frame Controller", True)
     slider_play =  expander_frame.empty()
@@ -79,6 +80,39 @@ def load_video(video, video2):
     }
     return cap
 
+def draw_shadows(frame,landmark,idx,bp, len_):
+   # pdb.set_trace()
+    idx0 = max(idx - len_,0)
+    h, w,_ = frame.shape
+    line_points = [(int(i.landmark[bp].x*w),int(i.landmark[bp].y*h)) for i in landmark[idx0: idx]]
+
+    for i in range(1, len(line_points)):
+        thickness = int(np.sqrt(30/float(i+1)*2.5))
+        cv2.line(frame, line_points[i-1],line_points[i],(255,255,30),thickness)
+    return frame
+
+def draw_ball_shadow(frame,ball,idx):
+   # pdb.set_trace()
+    idx0 = max(idx - 20,0)
+    line_points = [ i for i in ball[idx0: idx]]
+
+    for i in range(1, len(line_points)):
+        thickness = int(np.sqrt(30/float(i+1)*2.5))
+
+        bs0 = line_points[i-1]
+        bs1 = line_points[i]
+        if len(bs0) > 0 and len(bs1) > 0:
+            for p0 in bs0:
+                min_dist = 10
+                p1_min = None
+                for p1 in bs1:
+                    dst = distance.euclidean(p0,p1)
+                    if dst < min_dist:
+                        p1_min = p1
+                if p1_min is not None:
+                   cv2.line(frame,p0,p1_min,(255,255,30),thickness)
+    return frame
+
 video_files = [i.split(".")[0].replace("ball_","") for i in os.listdir("landmarks") if "ball" in i]
 video_files.sort()
 
@@ -118,10 +152,16 @@ if not st.session_state["is_playing"]:
     frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
     frame2 = cv2.cvtColor(frame2,cv2.COLOR_BGR2RGB)
 
+    for y in bp:
+        frame = draw_shadows(frame,lands_data,st.session_state['idx'],body_parts[y], 20)
+        frame2 = draw_shadows(frame2,lands_data2,st.session_state['idx2'],body_parts[y], 20)
+
+    if render_ball:
+        frame = draw_ball_shadow(frame,ball,st.session_state['idx'])
+        frame2 = draw_ball_shadow(frame2,ball2,st.session_state['idx2'])
+
     cont.image(frame)
     cont2.image(frame2)
-
-
 
 while st.session_state["is_playing"]:
     st.session_state.idx += 1  if st.session_state['idx'] < len(lands_data) -1 else 0
@@ -130,10 +170,19 @@ while st.session_state["is_playing"]:
     cap[2].set(cv2.CAP_PROP_POS_FRAMES,st.session_state["idx2"])
     ret, frame = cap[1].read()
     ret2, frame2 = cap[2].read()
+   
     h, w, _ = frame.shape
     h2, w2, _ =frame2.shape
     frame = cv2.cvtColor(frame,cv2.COLOR_BGR2RGB)
     frame2 = cv2.cvtColor(frame2,cv2.COLOR_BGR2RGB)
+
+    for y in bp:
+        frame = draw_shadows(frame,lands_data,st.session_state['idx'],body_parts[y], 20)
+        frame2 = draw_shadows(frame2,lands_data2,st.session_state['idx2'],body_parts[y], 20)
+    
+    if render_ball:
+        frame = draw_ball_shadow(frame,ball,st.session_state['idx'])
+        frame2 = draw_ball_shadow(frame2,ball2,st.session_state['idx2'])
 
     with ph.container() as p:
         st.image(frame)
